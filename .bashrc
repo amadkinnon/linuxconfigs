@@ -90,4 +90,4 @@ cdup ()
     pwd
 }
 
-#cd .
+cd .
