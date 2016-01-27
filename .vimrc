@@ -37,6 +37,10 @@ NeoBundle 'markwu/vim-laravel4-snippets'
 NeoBundle 'mattn/emmet-vim'
 NeoBundle 'unblevable/quick-scope'
 NeoBundle 'jwalton512/vim-blade'
+NeoBundle 'SirVer/ultisnips'
+NeoBundle 'tobyS/vmustache'
+NeoBundle 'tobyS/pdv'
+NeoBundle 'Valloric/YouCompleteMe'
 
 " You can specify revision/branch/tag.
 "NeoBundle 'Shougo/vimshell', { 'rev' : '3787e5' }
@@ -171,3 +175,7 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+
+" Settings for PHP Doc block plugin pdv
+let g:pdv_template_dir = $HOME ."/.vim/bundle/pdv/templates_snip"
+nnoremap <buffer> <C-d> :call pdv#DocumentWithSnip()<CR>
