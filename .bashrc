@@ -2,7 +2,7 @@
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
-	. /etc/bashrc
+    . /etc/bashrc
 fi
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
@@ -15,6 +15,7 @@ setenv ()
     eval $1=\"$2\"
     export $1
 }
+
 
 set -o vi
 setenv EDITOR vim
@@ -58,9 +59,7 @@ alias www='cd /var/www;ls'
 alias cd=cd_func
 alias godev='cd ~/go/src/sigmastcomms.com/user;ls'
 alias npf='cd ~/newpace/NPFrameQA/;ls'
-
-setenv PATH ${PATH}:/usr/sbin
-setenv PATH ${PATH}:/usr/local/bin:/usr/local/pgsql/bin:$ORACLE_HOME/bin:~/.composer/vendor/bin
+alias tmx="tmux a -d || tmux new-session \; split-window -h \; send-keys 'powerline-config tmux setup;clear' C-m \; resize-pane -R 1 \; select-pane -t 0 \;"
 
 GIT_BRANCH=""
 
@@ -123,8 +122,7 @@ gcd ()
 cdup ()
 {
     n=$1
-    while [ $n != 0 ];
-    do
+    while [ $n != 0 ]; do
         cd ..
         n=$(expr $n - 1)
     done
@@ -134,3 +132,5 @@ cdup ()
 cd .
 
 # User specific aliases and functions
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
