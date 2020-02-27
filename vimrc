@@ -64,6 +64,14 @@ call plug#begin('~/.vim/plugged')
 call plug#end()
 let g:deoplete#enable_at_startup = 1
 
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+
 sy on               " Enable Syntax Highlighting
 set background=dark " Use a dark background
 " set scrolloff=999   " Keep the cursor in the center of the screen
@@ -78,7 +86,7 @@ set shiftwidth=4    " No tabs, only spaces
 set expandtab       " Show matching block character for .2 seconds
 set showmatch       " Show matching brackets
 set matchtime=2     "   for 2 seconds
-set linespace=14    " Add a little line padding
+set linespace=16    " Add a little line padding
 set number          " Turn on line numbering
 set showcmd         " Show the command being typed
 set autowrite       " Autowrite files
