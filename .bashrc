@@ -5,6 +5,9 @@ if [ -f /etc/bashrc ]; then
     . /etc/bashrc
 fi
 
+# Set pass as the vault backend
+export AWS_VAULT_BACKEND=pass
+
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
 # export SYSTEMD_PAGER=
 export CVSROOT=adam.mackinnon@cvs.newpace.ca:/var/lib/cvs
@@ -30,6 +33,10 @@ if [ -f /bin/bash ]; then
     setenv SHELL /bin/bash
 fi
 
+if command pass &> /dev/null; then
+    export GITHUB_OAUTH_TOKEN=$(pass github/PAT)
+fi
+
 # Remap caps lock to escape
 #setxkbmap -option 'caps:ctrl_modifier'
 #xcape -e 'Caps_Lock=Escape'
@@ -43,34 +50,29 @@ setenv LS_COLORS 'di=36:ex=32:ln=01;36:or=05;43;34;7'
 LS_OPTIONS='--color=auto'
 export LS_OPTIONS
 
+alias cd=cd_func
 alias df='df -h'
+alias dr='cd ~/dev;ls'
+alias gdr='cd ~/go/src/github.com;ls'
 alias h='history'
 alias la='ls -a'
 alias ldpath="perl -e 'print \"\$_\n\" for (split(/:/,\$ENV{LD_LIBRARY_PATH}))'"
 alias logs='cd /var/tmp'
 alias ls='ls $LS_OPTIONS'
 alias lss='ls -ltr | sort -n -k 5 | more'
+alias pa='php artisan'
 alias path="perl -e 'print \"\$_\n\" for (split(/:/,\$ENV{PATH}))'"
 alias sb='source ~/.bashrc'
 alias sp='source ~/.profile'
-alias vi='vim -X'
-alias pa='php artisan'
-alias www='cd /var/www;ls'
-alias cd=cd_func
-alias godev='cd ~/go/src/sigmastcomms.com/user;ls'
-alias npf='cd ~/newpace/NPFrameQA/;ls'
 alias tmx="tmux a -d || tmux new-session \; split-window -h \; send-keys 'powerline-config tmux setup;clear' C-m \; resize-pane -R 1 \; select-pane -t 0 \;"
+alias vi='vim -X'
+alias www='cd /var/www;ls'
 
-GIT_BRANCH=""
 
-getGitBranch ()
-{
-   GIT_BRANCH=`git branch 2>/dev/null | grep '*'`
-   if [ "$GIT_BRANCH" != "" ]; then
-       GIT_BRANCH=${GIT_BRANCH:2}
-       GIT_BRANCH="${git_fg}[branch:$GIT_BRANCH]"
-   fi
-}
+# Git aliases
+alias gitl='git log --pretty=oneline --abbrev-commit'
+alias gitfp='git fetch && git pull'
+alias gitfpm='git checkout master && git fetch && git pull'
 
 cd_func ()
 {
@@ -80,7 +82,10 @@ cd_func ()
     fi
     $builtin cd $*
 
-    getGitBranch
+    GIT_BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
+    if [ "$GIT_BRANCH" != "" ]; then
+        GIT_BRANCH="[git:$GIT_BRANCH]"
+    fi
 
     fgs='\[\e[38;5;'
     bgs='\[\e[48;5;'
@@ -90,28 +95,7 @@ cd_func ()
     gitInfo="${fgs}117m\]${GIT_BRANCH}$fge"
     userInfo="$bold${fgs}31m\]\u${fge}"
     hostInfo="${fgs}215m\][\h]${fge}"
-    PS1="$workingDir$gitInfo\n$userInfo$hostInfo $ "
-}
-getawsarn ()
-{
-    aws sts get-caller-identity | perl -n -e'print "$1\n" if /Arn.*(arn.*)"/'
-}
-getawstk ()
-{
-    unset AWS_ACCESS_KEY_ID;
-    unset AWS_SECRET_ACCESS_KEY;
-    unset AWS_SESSION_TOKEN;
-    if [ "$1" == "" ]; then
-        echo "Requires a MFA Token: eg: getawstk 123456";
-        return;
-    fi;
-    TOKEN=$1;
-    DURATION=$2;
-    test 0$DURATION -lt 3600 && DURATION=3600;
-    RESPONSE=$(aws sts get-session-token --output text --serial-number $(aws iam list-mfa-devices --output text --user-name $(id -un) |cut -f 3) --token-code ${TOKEN} --duration-seconds ${DURATION});
-    export AWS_ACCESS_KEY_ID=$(echo ${RESPONSE} | grep CREDENTIALS | awk '{print $2}');
-    export AWS_SECRET_ACCESS_KEY=$(echo ${RESPONSE} | grep CREDENTIALS | awk '{print $4}' );
-    export AWS_SESSION_TOKEN=$(echo ${RESPONSE} |grep CREDENTIALS | awk '{print $5}' )
+    PS1="$workingDir$gitInfo\n$userInfo $ "
 }
 
 gcd ()
@@ -134,3 +118,6 @@ cd .
 # User specific aliases and functions
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# Enable jfrog cli completion
+source /home/adam/.jfrog/jfrog_bash_completion
