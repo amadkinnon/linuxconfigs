@@ -1,12 +1,21 @@
 local lsp = require("lsp-zero")
-
 lsp.preset("recommended")
 
 lsp.ensure_installed({
   'tsserver',
   'eslint',
-  'sumneko_lua',
+  'lua_ls',
   'gopls',
+})
+
+require('lspconfig').lua_ls.setup({
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = { 'vim' }
+            }
+        }
+    }
 })
 
 local cmp = require('cmp')
@@ -43,4 +52,6 @@ end)
 
 lsp.setup()
 
-
+vim.diagnostic.config({
+    virtual_text = true
+})
