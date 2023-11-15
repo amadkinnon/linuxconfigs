@@ -1,4 +1,5 @@
 local lsp = require("lsp-zero")
+
 lsp.preset("recommended")
 
 lsp.ensure_installed({
@@ -8,7 +9,10 @@ lsp.ensure_installed({
   'gopls',
 })
 
-require('lspconfig').lua_ls.setup({
+lsp.nvim_workspace()
+
+-- require('lspconfig').lua_ls.setup({
+lsp.configure("lua_ls", {
     settings = {
         Lua = {
             diagnostics = {
@@ -17,6 +21,42 @@ require('lspconfig').lua_ls.setup({
         }
     }
 })
+
+lsp.configure("yamlls", {
+    settings = {
+        yaml = {
+          keyOrdering = false,
+        }
+    }
+})
+
+
+-- require('lspconfig').gopls.setup({
+lsp.configure("gopls", {
+    capabilities = capabilities,
+    on_attach = on_attach,
+    settings = {
+        gopls = {
+            gofumpt = true,
+        },
+    },
+    flags = {
+        debounce_text_changes = 150,
+    },
+})
+
+-- require('lspconfig').golangci_lint_ls.setup({
+--     capabilities = capabilities,
+--     on_attach = on_attach,
+--     settings = {
+--         gopls = {
+--             gofumpt = true,
+--         },
+--     },
+--     flags = {
+--         debounce_text_changes = 150,
+--     },
+-- })
 
 local cmp = require('cmp')
 local cmp_select = {behavior = cmp.SelectBehavior.Select}
@@ -27,12 +67,18 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
   ["<C-Space>"] = cmp.mapping.complete(),
 })
 
-lsp.set_preferences({
-  sign_icons = { }
-})
-
 lsp.setup_nvim_cmp({
   mapping = cmp_mappings
+})
+
+lsp.set_preferences({
+  suggest_lsp_servers = false,
+  sign_icons = {
+      error = 'E',
+      warn = 'W',
+      hint = 'H',
+      info = 'I',
+  }
 })
 
 lsp.on_attach(function(client, bufnr)

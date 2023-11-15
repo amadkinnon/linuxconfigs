@@ -31,3 +31,5 @@ vim.opt.colorcolumn = "80"
 vim.opt.updatetime = 50
 
 vim.g.mapleader = "\\"
+
+vim.opt.formatoptions:append("j")
